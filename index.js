@@ -299,19 +299,20 @@ app.post(
   async (req, res) => {
     const request = req.body;
     const userId = Number(req.user.id);
+    const targetUserId = Number(request.userId);
     try {
       const user = await prisma.user.findUnique({
         where: { id: userId },
         select: { manager: true },
       });
-      if (!user || !user.manager) {
+      if (!user || (!user.manager && userId !== targetUserId)) {
         return res.status(403).json({
-          message: "Acces denied. You are not authorized to delete a Book!",
+          message: "Acces denied. You are not authorized to delete this user!",
         });
       }
       await prisma.user.delete({
         where: {
-          id: userId,
+          id: targetUserId,
         },
       });
       res.sendStatus(200);
