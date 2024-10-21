@@ -299,7 +299,12 @@ app.post(
   async (req, res) => {
     const request = req.body;
     const userId = Number(req.user.id);
-    const targetUserId = Number(request.userId);
+    const targetUserId = Number(request.targetUserId);
+    if (isNaN(targetUserId) || targetUserId <= 0) {
+      return res.status(400).json({
+        message: "Invalid user ID provided.",
+      });
+    }
     try {
       const user = await prisma.user.findUnique({
         where: { id: userId },
@@ -307,7 +312,7 @@ app.post(
       });
       if (!user || (!user.manager && userId !== targetUserId)) {
         return res.status(403).json({
-          message: "Acces denied. You are not authorized to delete this user!",
+          message: "Access denied. You are not authorized to delete this user!",
         });
       }
       await prisma.user.delete({
