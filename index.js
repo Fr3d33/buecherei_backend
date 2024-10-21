@@ -327,3 +327,19 @@ app.post(
     }
   }
 );
+
+app.post(
+  `${vorPath}/loanBook`,
+  jsonParser,
+  authenticateToken,
+  async (req, res) => {
+    const request = req.body;
+    const userId = Number(req.user.id);
+    try {
+      res.sendStatus(200);
+    } catch (error) {
+      console.log(error);
+      res.sendStatus(500);
+    }
+  }
+);
