@@ -13,6 +13,7 @@ model User {
   name    String
   passwd  String
   manager Boolean?
+  loans   Loan[]
 }
 
 model Book {
@@ -22,6 +23,7 @@ model Book {
   categories    Categorie[]     @relation("BookCategories")
   BookCategorie BookCategorie[]
   author        String?
+  loans         Loan[]
 }
 
 model Categorie {
@@ -37,5 +39,17 @@ model BookCategorie {
   book        Book      @relation(fields: [bookId], references: [id])
   categorie   Categorie @relation(fields: [categorieId], references: [id])
 
-  @@id([bookId, categorieId]) // Kombinierter Primärschlüssel für die Beziehung
+  @@id([bookId, categorieId])
+}
+
+model Loan {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  bookId     Int
+  loanDate   DateTime  @default(now())
+  returnDate DateTime?
+  user       User      @relation(fields: [userId], references: [id])
+  book       Book      @relation(fields: [bookId], references: [id])
+
+  @@unique([userId, bookId])
 }
