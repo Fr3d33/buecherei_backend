@@ -335,11 +335,35 @@ app.post(
   async (req, res) => {
     const request = req.body;
     const userId = Number(req.user.id);
+    const bookId = Number(request.bookId);
+    const returnDate = new Date(request.returnDate);
     try {
-      res.sendStatus(200);
+      const existingLoan = await prisma.loan.findFirst({
+        where: {
+          userId: userId,
+          bookId: bookId,
+        },
+      });
+
+      if (existingLoan) {
+        return res.status(400).json({
+          message: "You have already checked out this book.",
+        });
+      }
+      const loan = await prisma.loan.create({
+        data: {
+          bookId: bookId,
+          userId: userId,
+          returnDate: returnDate,
+        },
+      });
+      res.status(200).json({
+        message: "Book successfully checked out. Enjoy your reading!",
+        loan: loan,
+      });
     } catch (error) {
       console.log(error);
-      res.sendStatus(500);
+      res.status(500);
     }
   }
 );
