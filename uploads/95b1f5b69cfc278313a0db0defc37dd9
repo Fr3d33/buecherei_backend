@@ -1,0 +1,54 @@
+[
+    {
+      "id": 8,
+      "name": "The Great Gatsby",
+      "description": "A novel set in the Jazz Age on Long Island, near New York City.",
+      "categories": [
+        {
+          "id": 2,
+          "name": "Classic"
+        }
+      ],
+      "author": "F. Scott Fitzgerald",
+      "loans": [
+        {
+          "id": 4,
+          "loanDate": "2024-01-12",
+          "returnDate": "2024-01-26"
+        }
+      ]
+    },
+    {
+      "id": 88,
+      "name": "1984",
+      "description": "A dystopian social science fiction novel and cautionary tale about the dangers of totalitarianism.",
+      "categories": [
+        {
+          "id": 4,
+          "name": "Dystopian"
+        }
+      ],
+      "author": "George Orwell",
+      "loans": [
+        {
+          "id": 5,
+          "loanDate": "2024-02-01",
+          "returnDate": "2024-02-15"
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "name": "To Kill a Mockingbird",
+      "description": "A novel of warmth and humor despite dealing with serious issues of rape and racial inequality.",
+      "categories": [
+        {
+          "id": 6,
+          "name": "Historical Fiction"
+        }
+      ],
+      "author": "Harper Lee",
+      "loans": []
+    }
+  ]
+  

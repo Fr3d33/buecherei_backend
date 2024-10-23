@@ -13,6 +13,11 @@ const password_generator = require("generate-password");
 require("dotenv").config();
 const prisma = new PrismaClient();
 const jsonParser = bodyParser.json();
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
+
+const upload = multer({ dest: "uploads/" });
 
 let appinstance = app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
@@ -365,5 +370,92 @@ app.post(
       console.log(error);
       res.status(500);
     }
+  }
+);
+
+app.post(
+  `${vorPath}/returnBook`,
+  jsonParser,
+  authenticateToken,
+  async (req, res) => {
+    const request = req.body;
+    const userId = Number(req.user.id);
+    const bookId = Number(request.bookId);
+    try {
+      const existingLoan = await prisma.loan.findFirst({
+        where: {
+          userId: userId,
+          bookId: bookId,
+        },
+      });
+
+      if (!existingLoan) {
+        return res.status(400).json({
+          message: "There is no loan with this user and book ID",
+        });
+      }
+      const loan = await prisma.loan.delete({
+        where: {
+          id: existingLoan.id,
+        },
+      });
+      res.status(200).json({
+        message: "Book successfully returned.",
+        loan: loan,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500);
+    }
+  }
+);
+
+app.post(
+  `${vorPath}/importBook`,
+  authenticateToken,
+  upload.single("file"),
+  async (req, res) => {
+    const file = req.file;
+    const filePath = path.join(__dirname, "uploads", file.filename);
+
+    fs.readFile(filePath, "utf-8", async (err, jsonData) => {
+      if (err) {
+        console.error("Error reading the file:", err);
+        return res.status(500).json({ message: "Error reading the file" });
+      }
+      try {
+        const parsedData = JSON.parse(jsonData);
+        if (!Array.isArray(parsedData)) {
+          return res.status(400).json({
+            message: "Invalid data format. Expected an array of books.",
+          });
+        }
+        const bookPromises = parsedData.map(async (book) => {
+          return await prisma.book.create({
+            data: {
+              name: book.name,
+              description: book.description,
+              author: book.author,
+              categories: {
+                connect: book.categories.map((category) => ({
+                  id: category.id,
+                })),
+              },
+            },
+          });
+        });
+        const importedBooks = await Promise.all(bookPromises);
+        res.status(200).json({
+          message: "Books successfully imported",
+          importedBooksCount: importedBooks.length,
+        });
+      } catch (error) {
+        console.error(
+          "Error processing JSON data or saving to database:",
+          error
+        );
+        res.status(500).json({ message: "Error processing data" });
+      }
+    });
   }
 );
