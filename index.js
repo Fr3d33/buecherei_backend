@@ -467,7 +467,6 @@ app.post(
   async (req, res) => {
     const file = req.file;
     const filePath = path.join(__dirname, "uploads", file.filename);
-
     fs.readFile(filePath, "utf-8", async (err, jsonData) => {
       if (err) {
         console.error("Error reading the file:", err);
