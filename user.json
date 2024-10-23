@@ -1,0 +1,33 @@
+[
+    {
+      "email": "john.doe@example.com",
+      "name": "John Doe",
+      "passwd": "hashed_password_1",
+      "manager": true
+    },
+    {
+      "email": "jane.smith@example.com",
+      "name": "Jane Smith",
+      "passwd": "hashed_password_2",
+      "manager": false
+    },
+    {
+      "email": "alice.johnson@example.com",
+      "name": "Alice Johnson",
+      "passwd": "hashed_password_3",
+      "manager": false
+    },
+    {
+      "email": "bob.brown@example.com",
+      "name": "Bob Brown",
+      "passwd": "hashed_password_4",
+      "manager": true
+    },
+    {
+      "email": "charlie.white@example.com",
+      "name": "Charlie White",
+      "passwd": "hashed_password_5",
+      "manager": false
+    }
+]
+  

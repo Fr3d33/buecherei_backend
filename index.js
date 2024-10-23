@@ -459,3 +459,49 @@ app.post(
     });
   }
 );
+
+app.post(
+  `${vorPath}/importUser`,
+  authenticateToken,
+  upload.single("file"),
+  async (req, res) => {
+    const file = req.file;
+    const filePath = path.join(__dirname, "uploads", file.filename);
+
+    fs.readFile(filePath, "utf-8", async (err, jsonData) => {
+      if (err) {
+        console.error("Error reading the file:", err);
+        return res.status(500).json({ message: "Error reading the file" });
+      }
+      try {
+        const parsedData = JSON.parse(jsonData);
+        if (!Array.isArray(parsedData)) {
+          return res.status(400).json({
+            message: "Invalid data format. Expected an array of Usern.",
+          });
+        }
+        const user = parsedData.map(async (user) => {
+          return await prisma.user.create({
+            data: {
+              name: user.name,
+              email: user.email,
+              passwd: user.passwd,
+              manager: user.manager,
+            },
+          });
+        });
+        const importedUser = await Promise.all(user);
+        res.status(200).json({
+          message: "Books successfully imported",
+          importedUserCount: importedUser.length,
+        });
+      } catch (error) {
+        console.error(
+          "Error processing JSON data or saving to database:",
+          error
+        );
+        res.status(500).json({ message: "Error processing data" });
+      }
+    });
+  }
+);

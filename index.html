@@ -3,6 +3,11 @@
   <button type="submit">Upload Book JSON</button>
 </form>
 
+<form id="uploadFormUser">
+  <input type="file" id="fileInputUser" name="file" />
+  <button type="submit">Upload User JSON</button>
+</form>
+
 <script>
   document
     .getElementById("uploadForm")
@@ -13,7 +18,7 @@
       const file = fileInput.files[0];
 
       if (!file) {
-        alert("Bitte eine Datei auswählen.");
+        alert("Bitte eine Datei mit Büchern auswählen.");
         return;
       }
 
@@ -23,6 +28,42 @@
       try {
         const response = await fetch(
           "http://localhost:4001/book/backend/importBook",
+          {
+            method: "POST",
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzI5NzA2NjA5fQ.w5Baurr0N3AxcL77UpZU73v3C1sAdjdOHqQNCGXHbew", // Setze den Bearer Token hier
+            },
+            body: formData, // Sende die Datei
+          }
+        );
+
+        const result = await response.json();
+        console.log("Upload successful:", result);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    });
+
+  document
+    .getElementById("uploadFormUser")
+    .addEventListener("submit", async function (event) {
+      event.preventDefault(); // Verhindert das Standardformularverhalten
+
+      const fileInput = document.getElementById("fileInputUser");
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Bitte eine Datei mit Nutzern auswählen.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch(
+          "http://localhost:4001/book/backend/importUser",
           {
             method: "POST",
             headers: {
