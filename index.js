@@ -19,10 +19,6 @@ const multer = require("multer");
 
 const upload = multer({ dest: "uploads/" });
 
-let appinstance = app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
-
 app.use(
   cors({
     origin: "*",
@@ -51,19 +47,19 @@ app.get(`${vorPath}/`, function (request, response) {
   response.send("Hello World!");
 });
 
-app.listen(3001, function () {
-  console.log("Started application on port %d", 4001);
+// Start server
+app.listen(port, function () {
+  console.log(`🚀 Bücherei Backend started on port ${port}`);
+  console.log(`📖 API available at: http://localhost:${port}${vorPath}`);
 });
 
 app.post(`${vorPath}/login`, jsonParser, async (req, res) => {
   const request = req.body;
   const email = request.email;
   const password = request.password;
-
   const user = await prisma.user.findFirst({
     where: {
       email: {
-        // ILIKE ermöglicht eine case-insensitive Suche in PostgreSQL
         contains: email,
         mode: "insensitive",
       },
